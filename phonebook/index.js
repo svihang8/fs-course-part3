@@ -2,8 +2,12 @@ const express = require('express');
 const app = express();
 
 const morgan = require('morgan');
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
+app.use(express.static('build'));
+
 app.use(morgan(function (tokens, req, res) {
     return [
       tokens.method(req, res),
@@ -70,7 +74,9 @@ app.get('/api/persons/:id', (req, res) => {
         }
     
         if(rperson) {
-            res.json(rperson);
+            res.json({
+                'data' : rperson,
+            });
         } else {
             res.status(404).json({
                 'message' : 'id not found',
@@ -104,7 +110,7 @@ app.delete('/api/persons/:id', (req, res) => {
 
             res.json({
                 'message' : 'person deleted',
-                'person' : dperson,
+                'data' : dperson,
             })
         } else {
             res.status(404).json({
@@ -146,7 +152,7 @@ app.post('/api/persons', (req, res) => {
 
             res.json({
                 'message' : 'added new entry',
-                'person' : person,
+                'data' : person,
             })
         } else {
             res.status(422).json({
@@ -167,7 +173,7 @@ app.get('/info', (req, res) => {
               ${new Date()}` )
 })
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`server running on ${PORT}`);
 })
